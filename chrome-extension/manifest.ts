@@ -3,24 +3,13 @@ import { readFileSync } from 'node:fs';
 const packageJson = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 /**
- * @prop default_locale
- * if you want to support multiple languages, you can use the following reference
- * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
- *
- * @prop browser_specific_settings
- * Must be unique to your extension to upload to addons.mozilla.org
- * (you can delete if you only want a chrome extension)
- *
- * @prop permissions
- * Firefox doesn't support sidePanel (It will be deleted in manifest parser)
- *
- * @prop content_scripts
- * css: ['content.css'], // public folder
+ * Manifest para a extensão Mannco.store Enhancer
+ * Limitando permissões apenas para o site mannco.store
  */
 const manifest = {
   manifest_version: 3,
   default_locale: 'en',
-  name: '__MSG_extensionName__',
+  name: 'Mannco.store Enhancer',
   browser_specific_settings: {
     gecko: {
       id: 'example@example.com',
@@ -28,9 +17,12 @@ const manifest = {
     },
   },
   version: packageJson.version,
-  description: '__MSG_extensionDescription__',
-  host_permissions: ['<all_urls>'],
-  permissions: ['storage', 'scripting', 'tabs', 'notifications', 'sidePanel'],
+  description: 'Enhances the mannco.store website with additional features and improvements',
+
+  // Limitando permissões apenas para mannco.store - mais seguro para o usuário
+  host_permissions: ['*://*.mannco.store/*'],
+  permissions: ['storage'],
+
   options_page: 'options/index.html',
   background: {
     service_worker: 'background.js',
@@ -38,38 +30,36 @@ const manifest = {
   },
   action: {
     default_popup: 'popup/index.html',
-    default_icon: 'icon-34.png',
-  },
-  chrome_url_overrides: {
-    newtab: 'new-tab/index.html',
+    default_icon: {
+      '34': 'icon-34.png',
+      '128': 'icon-128.png',
+    },
   },
   icons: {
-    128: 'icon-128.png',
+    '34': 'icon-34.png',
+    '128': 'icon-128.png',
   },
   content_scripts: [
     {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      matches: ['*://*.mannco.store/*'],
       js: ['content/index.iife.js'],
+      css: ['mannco-styles.css'],
     },
     {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      matches: ['*://*.mannco.store/*'],
       js: ['content-ui/index.iife.js'],
     },
     {
-      matches: ['http://*/*', 'https://*/*', '<all_urls>'],
+      matches: ['*://*.mannco.store/*'],
       css: ['content.css'],
     },
   ],
-  devtools_page: 'devtools/index.html',
   web_accessible_resources: [
     {
-      resources: ['*.js', '*.css', '*.svg', 'icon-128.png', 'icon-34.png'],
-      matches: ['*://*/*'],
+      resources: ['*.js', '*.css', '*.png', 'icon-128.png', 'icon-34.png'],
+      matches: ['*://*.mannco.store/*'],
     },
   ],
-  side_panel: {
-    default_path: 'side-panel/index.html',
-  },
 } satisfies chrome.runtime.ManifestV3;
 
 export default manifest;

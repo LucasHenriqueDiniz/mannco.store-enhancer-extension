@@ -1,4 +1,4 @@
-import { useRef, useSyncExternalStore } from 'react';
+import React, { useRef, useSyncExternalStore } from 'react';
 import type { BaseStorage } from '@extension/storage';
 
 type WrappedPromise = ReturnType<typeof wrapPromise>;
@@ -24,6 +24,39 @@ export const useStorage = <
 
   return (_data ?? storageMap.get(storage)!.read()) as Exclude<Data, PromiseLike<unknown>>;
 };
+
+// Função simplificada para o caso específico que precisamos
+export function useSimpleStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {
+  // Estado local para manter o valor
+  const [value, setValue] = React.useState<T>(defaultValue);
+
+  // Efeito para carregar o valor do armazenamento quando o componente montar
+  React.useEffect(() => {
+    chrome.storage.local.get(key).then(result => {
+      if (result[key] !== undefined) {
+        setValue(result[key]);
+      }
+    });
+
+    // Ouvinte para detectar mudanças no armazenamento
+    const listener = (changes: { [key: string]: chrome.storage.StorageChange }, area: string) => {
+      if (area === 'local' && changes[key]) {
+        setValue(changes[key].newValue);
+      }
+    };
+
+    chrome.storage.onChanged.addListener(listener);
+    return () => chrome.storage.onChanged.removeListener(listener);
+  }, [key]);
+
+  // Função para atualizar o valor no armazenamento
+  const updateValue = (newValue: T) => {
+    chrome.storage.local.set({ [key]: newValue });
+    setValue(newValue);
+  };
+
+  return [value, updateValue];
+}
 
 const wrapPromise = <R,>(promise: Promise<R>) => {
   let status = 'pending';

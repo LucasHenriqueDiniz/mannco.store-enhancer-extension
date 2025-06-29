@@ -17,7 +17,9 @@ const updateCache = async <D>(valueOrUpdate: ValueOrUpdate<D>, cache: D | null):
   };
 
   // Type guard to check in case of a function, if its a Promise
-  const returnsPromise = <D>(func: (prev: D) => D | Promise<D>): func is (prev: D) => Promise<D> => {
+  const returnsPromise = <D>(
+    func: (prev: D) => D | Promise<D>,
+  ): func is (prev: D) => Promise<D> => {
     // Use ReturnType to infer the return type of the function and check if it's a Promise
     return (func as (prev: D) => Promise<D>) instanceof Promise;
   };
@@ -49,14 +51,20 @@ function checkStoragePermission(storageEnum: StorageEnum): void {
   }
 
   if (chrome.storage[storageEnum] === undefined) {
-    throw new Error(`Check your storage permission in manifest.json: ${storageEnum} is not defined`);
+    throw new Error(
+      `Check your storage permission in manifest.json: ${storageEnum} is not defined`,
+    );
   }
 }
 
 /**
  * Creates a storage area for persisting and exchanging data.
  */
-export function createStorage<D = string>(key: string, fallback: D, config?: StorageConfig<D>): BaseStorage<D> {
+export function createStorage<D = string>(
+  key: string,
+  fallback: D,
+  config?: StorageConfig<D>,
+): BaseStorage<D> {
   let cache: D | null = null;
   let initedCache = false;
   let listeners: Array<() => void> = [];
@@ -80,7 +88,9 @@ export function createStorage<D = string>(key: string, fallback: D, config?: Sto
       })
       .catch(error => {
         console.warn(error);
-        console.warn('Please call setAccessLevel into different context, like a background script.');
+        console.warn(
+          'Please call setAccessLevel into different context, like a background script.',
+        );
       });
     globalSessionAccessLevelFlag = true;
   }
@@ -130,7 +140,9 @@ export function createStorage<D = string>(key: string, fallback: D, config?: Sto
   });
 
   // Listener for live updates from the browser
-  async function _updateFromStorageOnChanged(changes: { [key: string]: chrome.storage.StorageChange }) {
+  async function _updateFromStorageOnChanged(changes: {
+    [key: string]: chrome.storage.StorageChange;
+  }) {
     // Check if the key we are listening for is in the changes object
     if (changes[key] === undefined) return;
 

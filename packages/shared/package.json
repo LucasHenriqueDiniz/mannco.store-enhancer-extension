@@ -24,5 +24,9 @@
   "devDependencies": {
     "@extension/storage": "workspace:*",
     "@extension/tsconfig": "workspace:*"
+  },
+  "dependencies": {
+    "@types/webextension-polyfill": "^0.12.3",
+    "webextension-polyfill": "^0.12.0"
   }
 }

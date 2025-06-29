@@ -266,3 +266,79 @@ This Boilerplate is made possible thanks to all of its contributors.
 ---
 
 Made by [Jonghakseo](https://jonghakseo.github.io/)
+
+# Mannco.store Enhancer - Extensão para Chrome
+
+Esta extensão adiciona funcionalidades extra ao site mannco.store, melhorando a experiência do usuário com recursos adicionais e aprimoramentos de interface.
+
+## Funcionalidades
+
+- Melhorias na interface de usuário
+- Informações adicionais sobre itens
+- Cálculo de taxas e valores finais
+- Destaque para ofertas especiais
+
+## Desenvolvimento
+
+### Pré-requisitos
+
+- Node.js v22.12.0 ou superior
+- PNPM v9.15.1 ou superior
+- Chrome/Brave ou outro navegador baseado em Chromium
+
+### Como iniciar o ambiente de desenvolvimento
+
+1. Clone este repositório
+2. Configure o Git para Windows para usar LF em vez de CRLF:
+   ```
+   git config --global core.eol lf
+   git config --global core.autocrlf input
+   ```
+3. Execute o script de desenvolvimento:
+   ```
+   run-dev.bat
+   ```
+   ou
+   ```
+   run-direct.bat
+   ```
+
+4. Instale a extensão no Chrome:
+   - Abra `chrome://extensions`
+   - Ative o "Modo do desenvolvedor"
+   - Clique em "Carregar sem compactação"
+   - Selecione a pasta `dist` do projeto
+
+5. Visite o site mannco.store para testar a extensão
+
+### Como o Hot Module Reload funciona
+
+O projeto utiliza um servidor WebSocket na porta 8081 para comunicação entre o ambiente de desenvolvimento e a extensão instalada no navegador. Quando você faz alterações no código:
+
+1. O sistema de build detecta as alterações
+2. O servidor WebSocket notifica a extensão no navegador
+3. A extensão é atualizada automaticamente sem necessidade de reinstalação manual
+
+Se você ver "Upgrade Required" ao acessar `http://localhost:8081` diretamente, isso é normal. O endereço é um servidor WebSocket, não um servidor HTTP comum.
+
+### Scripts Disponíveis
+
+- `run-dev.bat`: Inicia o ambiente de desenvolvimento com hot reload
+- `run-direct.bat`: Inicia o ambiente de desenvolvimento diretamente, sem scripts intermediários
+- `install.bat`: Ajuda a instalar a extensão no navegador
+- `bat-scripts\kill-dev.bat`: Encerra todos os processos de desenvolvimento anteriores
+
+## Estrutura do Projeto
+
+O projeto é baseado no boilerplate [chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite), com modificações específicas para o site mannco.store.
+
+### Arquivos principais:
+
+- `pages/content/src/App.tsx`: Componente React principal para interação com o site mannco.store
+- `pages/popup/src/App.tsx`: UI do popup da extensão
+- `packages/shared/src/core.ts`: Lógica principal para melhorar o site mannco.store
+- `chrome-extension/manifest.ts`: Configuração da extensão (permissões, recursos, etc.)
+
+## Licença
+
+MIT

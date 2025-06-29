@@ -1,16 +1,17 @@
 .App {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   text-align: center;
   height: 100%;
   padding: 1rem;
+  max-height: 600px;
+  overflow-y: auto;
+  width: 300px;
+  background-color: #222639;
+  color: white;
 }
 
 .App-logo {
-  height: 50vmin;
+  height: 80px;
   margin-bottom: 1rem;
 }
 
@@ -19,8 +20,194 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   font-size: 0.75rem;
+}
+
+.App-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2 {
+  margin-top: 0;
+  color: white;
+}
+
+/* Grande toggle on/off */
+.toggle-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.big-toggle {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.toggle-track {
+  width: 120px;
+  height: 60px;
+  background-color: #393a49;
+  border-radius: 34px;
+  padding: 4px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.big-toggle.enabled .toggle-track {
+  background-color: #4caf50;
+}
+
+.big-toggle.disabled .toggle-track {
+  background-color: #f44336;
+}
+
+.toggle-indicator {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.big-toggle.enabled .toggle-indicator {
+  transform: translateX(60px);
+}
+
+.big-toggle.disabled .toggle-indicator {
+  transform: translateX(0);
+}
+
+/* Estilo para o ícone de texto */
+.toggle-icon-text {
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.big-toggle.enabled .toggle-icon-text {
+  color: #4caf50;
+}
+
+.big-toggle.disabled .toggle-icon-text {
+  color: #f44336;
+}
+
+.toggle-label {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.big-toggle.enabled .toggle-label {
+  color: #4caf50;
+}
+
+.big-toggle.disabled .toggle-label {
+  color: #f44336;
+}
+
+/* Estilo para o texto ON/OFF */
+.toggle-status-text {
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #000; /* Cor escura para bom contraste com o fundo branco do círculo */
+}
+
+/* Status do site */
+.site-status {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-indicator.active {
+  background-color: #4caf50;
+}
+
+.status-indicator.inactive {
+  background-color: #f44336;
+}
+
+/* Botões de ação */
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  margin: 0 5px;
+}
+
+.action-btn.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.action-btn.active:hover {
+  background-color: #45a049;
+}
+
+.action-btn.disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.action-btn.config {
+  background-color: #2196f3;
+  color: white;
+}
+
+.action-btn.config:hover {
+  background-color: #0b7dda;
+}
+
+.action-btn.donate {
+  background-color: #ff9800;
+  color: white;
+}
+
+.action-btn.donate:hover {
+  background-color: #e68a00;
+}
+
+/* Informações de versão */
+.version-info {
+  margin-top: 15px;
+  font-size: 12px;
+  color: #aaaaaa;
 }
 
 code {

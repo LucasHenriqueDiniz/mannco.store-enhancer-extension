@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mannco.store Enhancer Debug</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #4a4a4a;
+      }
+      .status {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+      }
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      .warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+      }
+      button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 10px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      pre {
+        background-color: #f8f8f8;
+        padding: 10px;
+        border-radius: 4px;
+        overflow: auto;
+        font-size: 14px;
+      }
+      .logs {
+        height: 150px;
+        overflow-y: auto;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Mannco.store Enhancer Debug</h1>
+
+      <h2>HMR WebSocket Test</h2>
+      <div id="wsStatus" class="status">Verificando conexão WebSocket...</div>
+      <div class="logs" id="wsLogs"></div>
+
+      <h2>Extension Status</h2>
+      <div id="extensionStatus" class="status">Verificando status da extensão...</div>
+      <div class="logs" id="extLogs"></div>
+
+      <button id="testButton">Testar Conexão</button>
+      <button id="openWsButton">Abrir Teste WebSocket</button>
+      <button id="testAlternativeWs">Testar WebSocket Alternativo</button>
+    </div>
+
+    <script>
+      // Função para adicionar logs
+      function addLog(containerId, text) {
+        const container = document.getElementById(containerId);
+        const now = new Date();
+        const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+        container.innerHTML += `<div>[${time}] ${text}</div>`;
+        container.scrollTop = container.scrollHeight;
+      }
+
+      // Teste de conexão WebSocket
+      function testWebSocket() {
+        const wsStatusEl = document.getElementById('wsStatus');
+        wsStatusEl.textContent = 'Tentando conectar ao servidor WebSocket...';
+        wsStatusEl.className = 'status warning';
+
+        addLog('wsLogs', 'Iniciando teste de conexão WebSocket...');
+
+        try {
+          // Primeiro tentar uma solicitação HTTP para verificar se o servidor está respondendo
+          addLog('wsLogs', 'Verificando servidor HTTP na porta 8081...');
+          fetch('http://localhost:8081')
+            .then(response => {
+              addLog('wsLogs', `Servidor HTTP respondeu com status: ${response.status}`);
+              addLog('wsLogs', `Headers: ${JSON.stringify([...response.headers])}`);
+
+              // Verificar o tipo de conteúdo
+              response.text().then(text => {
+                addLog(
+                  'wsLogs',
+                  `Resposta (primeiros 100 caracteres): ${text.substring(0, 100)}...`,
+                );
+              });
+
+              // Agora tentamos o WebSocket
+              connectWebSocket();
+            })
+            .catch(error => {
+              addLog('wsLogs', `Erro ao contatar servidor HTTP: ${error.message}`);
+              wsStatusEl.textContent = 'Servidor não encontrado na porta 8081';
+              wsStatusEl.className = 'status error';
+
+              // Tenta WebSocket mesmo assim
+              connectWebSocket();
+            });
+        } catch (error) {
+          addLog('wsLogs', `Erro geral: ${error.message}`);
+          wsStatusEl.textContent = 'Erro ao tentar contatar servidor';
+          wsStatusEl.className = 'status error';
+        }
+      }
+
+      function connectWebSocket() {
+        const wsStatusEl = document.getElementById('wsStatus');
+        addLog('wsLogs', 'Tentando conexão WebSocket ws://localhost:8081...');
+
+        try {
+          const ws = new WebSocket('ws://localhost:8081');
+
+          ws.onopen = function () {
+            addLog('wsLogs', 'Conexão WebSocket estabelecida com sucesso!');
+            wsStatusEl.textContent = 'Conectado ao servidor WebSocket! HMR está funcionando.';
+            wsStatusEl.className = 'status success';
+
+            // Enviar ping para testar comunicação bidirecional
+            ws.send(JSON.stringify({ type: 'ping', time: new Date().toISOString() }));
+          };
+
+          ws.onmessage = function (event) {
+            addLog('wsLogs', `Mensagem recebida: ${event.data}`);
+          };
+
+          ws.onerror = function (error) {
+            addLog(
+              'wsLogs',
+              `Erro na conexão WebSocket (${error.type}): ${error.message || 'Sem detalhes'}`,
+            );
+            wsStatusEl.textContent =
+              'Erro ao conectar ao servidor WebSocket. HMR pode não estar funcionando.';
+            wsStatusEl.className = 'status error';
+          };
+
+          ws.onclose = function (event) {
+            addLog(
+              'wsLogs',
+              `Conexão WebSocket fechada: Código ${event.code}, Razão: ${event.reason || 'Nenhuma razão fornecida'}, Limpo: ${event.wasClean}`,
+            );
+          };
+        } catch (error) {
+          addLog('wsLogs', `Erro ao criar WebSocket: ${error.message}`);
+          wsStatusEl.textContent = 'Erro ao criar WebSocket: ' + error.message;
+          wsStatusEl.className = 'status error';
+        }
+      }
+
+      // Função alternativa para testar com protocolo explícito
+      function testAlternativeWebSocket() {
+        addLog('wsLogs', 'Tentando conexão WebSocket alternativa...');
+
+        try {
+          const ws = new WebSocket('ws://localhost:8081/', ['hmr-protocol']);
+
+          ws.onopen = function () {
+            addLog('wsLogs', 'Conexão WebSocket alternativa estabelecida com sucesso!');
+          };
+
+          ws.onerror = function (error) {
+            addLog(
+              'wsLogs',
+              `Erro na conexão WebSocket alternativa: ${error.message || 'Sem detalhes'}`,
+            );
+          };
+
+          ws.onclose = function (event) {
+            addLog(
+              'wsLogs',
+              `Conexão WebSocket alternativa fechada: Código ${event.code}, Razão: ${event.reason || 'Nenhuma razão'}`,
+            );
+          };
+        } catch (error) {
+          addLog('wsLogs', `Erro ao criar WebSocket alternativo: ${error.message}`);
+        }
+      }
+
+      // Verificar status da extensão
+      function checkExtensionStatus() {
+        const statusEl = document.getElementById('extensionStatus');
+        statusEl.className = 'status warning';
+        statusEl.textContent = 'Verificando...';
+
+        addLog('extLogs', 'Verificando status da extensão...');
+
+        // Verifica se a extensão existe
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+          try {
+            addLog('extLogs', 'API Chrome detectada, enviando mensagem');
+            chrome.runtime.sendMessage({ action: 'getStatus' }, function (response) {
+              if (chrome.runtime.lastError) {
+                addLog('extLogs', `Erro: ${chrome.runtime.lastError.message}`);
+                statusEl.textContent = 'Erro: ' + chrome.runtime.lastError.message;
+                statusEl.className = 'status error';
+                return;
+              }
+
+              if (response && response.enabled !== undefined) {
+                addLog('extLogs', `Resposta recebida: enabled=${response.enabled}`);
+                statusEl.textContent =
+                  'Extensão está instalada e ' + (response.enabled ? 'ativada' : 'desativada');
+                statusEl.className = 'status success';
+              } else {
+                addLog('extLogs', 'Resposta sem dados de status');
+                statusEl.textContent = 'Extensão respondeu, mas sem dados de status.';
+                statusEl.className = 'status error';
+              }
+            });
+          } catch (err) {
+            addLog('extLogs', `Erro: ${err.message}`);
+            statusEl.textContent = 'Erro ao comunicar com a extensão: ' + err.message;
+            statusEl.className = 'status error';
+          }
+        } else {
+          addLog('extLogs', 'API Chrome não detectada');
+          statusEl.textContent = 'API Chrome não detectada. A extensão está instalada?';
+          statusEl.className = 'status error';
+        }
+      }
+
+      // Inicializar testes
+      document.addEventListener('DOMContentLoaded', function () {
+        testWebSocket();
+        checkExtensionStatus();
+
+        document.getElementById('testButton').addEventListener('click', function () {
+          document.getElementById('wsLogs').innerHTML = '';
+          document.getElementById('extLogs').innerHTML = '';
+          testWebSocket();
+          checkExtensionStatus();
+        });
+
+        document.getElementById('openWsButton').addEventListener('click', function () {
+          window.open('http://localhost:8081', '_blank');
+        });
+
+        document.getElementById('testAlternativeWs').addEventListener('click', function () {
+          testAlternativeWebSocket();
+        });
+      });
+    </script>
+  </body>
+</html>

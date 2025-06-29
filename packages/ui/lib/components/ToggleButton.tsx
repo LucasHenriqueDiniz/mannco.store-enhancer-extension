@@ -18,7 +18,8 @@ export const ToggleButton = ({ className, children, ...props }: ToggleButtonProp
         'mt-4 border-2 font-bold',
       )}
       onClick={exampleThemeStorage.toggle}
-      {...props}>
+      {...props}
+    >
       {children}
     </button>
   );

@@ -1,19 +1,12 @@
 import { useEffect } from 'react';
-import { ToggleButton } from '@extension/ui';
-import { exampleThemeStorage } from '@extension/storage';
-import { t } from '@extension/i18n';
 
 export default function App() {
   useEffect(() => {
+    // Só registramos que o componente carregou para debugging
     console.log('content ui loaded');
   }, []);
 
-  return (
-    <div className="flex items-center justify-between gap-2 rounded bg-blue-100 px-2 py-1">
-      <div className="flex gap-1 text-blue-500">
-        Edit <strong className="text-blue-700">pages/content-ui/src/app.tsx</strong> and save to reload.
-      </div>
-      <ToggleButton onClick={exampleThemeStorage.toggle}>{t('toggleTheme')}</ToggleButton>
-    </div>
-  );
+  // Não renderizamos nenhuma UI já que não queremos uma barra em todas as páginas
+  // O content script principal já cuida de aplicar as melhorias ao mannco.store
+  return null;
 }

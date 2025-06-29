@@ -28,7 +28,10 @@ export function makeEntryPointPlugin(): PluginOption {
               cleanupTargets.add(path.resolve(outputDir, fileName));
 
               const originalFileName = fileName.replace('.map', '');
-              const replacedSource = String(module.source).replaceAll(originalFileName, newFileName);
+              const replacedSource = String(module.source).replaceAll(
+                originalFileName,
+                newFileName,
+              );
 
               module.source = '';
               fs.writeFileSync(path.resolve(outputDir, newFileName), replacedSource);

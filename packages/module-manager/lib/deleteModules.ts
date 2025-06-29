@@ -14,7 +14,10 @@ const DEFAULT_CHOICES = [
   { name: 'Background Script', value: 'background' },
   { name: 'Content Script (Execute JS on Web Page)', value: 'content' },
   { name: 'Content Script UI (Render Custom React Component on Web Page)', value: 'content-ui' },
-  { name: 'Content Script Runtime (Inject JS on Specific Actions like Popup Click)', value: 'content-runtime' },
+  {
+    name: 'Content Script Runtime (Inject JS on Specific Actions like Popup Click)',
+    value: 'content-runtime',
+  },
   { name: 'New Tab Override', value: 'new-tab' },
   { name: 'Popup (On Extension Icon Click)', value: 'popup' },
   { name: 'DevTools (Include DevTools Panel)', value: 'devtools' },
@@ -103,7 +106,10 @@ async function deleteContentScriptUI(manifestObject: chrome.runtime.ManifestV3) 
 }
 
 async function deleteContentScriptRuntime(manifestObject: chrome.runtime.ManifestV3) {
-  await zipFolder(resolve(pagesPath, 'content-runtime'), resolve(archivePath, 'content-runtime.zip'));
+  await zipFolder(
+    resolve(pagesPath, 'content-runtime'),
+    resolve(archivePath, 'content-runtime.zip'),
+  );
   void rimraf(resolve(pagesPath, 'content-runtime'));
   const jsName = 'content-runtime/index.iife.js';
   manifestObject.content_scripts = manifestObject.content_scripts?.filter(script => {
@@ -144,7 +150,9 @@ async function deleteSidePanel(manifestObject: chrome.runtime.ManifestV3) {
     delete manifestObject.side_panel;
   }
   if (manifestObject.permissions?.includes('sidePanel')) {
-    manifestObject.permissions = manifestObject.permissions.filter(permission => permission !== 'sidePanel');
+    manifestObject.permissions = manifestObject.permissions.filter(
+      permission => permission !== 'sidePanel',
+    );
   }
 }
 

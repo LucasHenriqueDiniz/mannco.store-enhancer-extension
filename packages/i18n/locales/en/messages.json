@@ -1,11 +1,11 @@
 {
   "extensionDescription": {
-    "description": "Extension description",
-    "message": "Chrome extension boilerplate developed with Vite, React and Typescript"
+    "description": "Description of the extension.",
+    "message": "Enhances the mannco.store website with additional features and improvements"
   },
   "extensionName": {
-    "description": "Extension name",
-    "message": "Chrome extension boilerplate"
+    "description": "Name of the extension.",
+    "message": "Mannco.store Enhancer"
   },
   "toggleTheme": {
     "message": "Toggle theme"
