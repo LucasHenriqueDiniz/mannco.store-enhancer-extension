@@ -70,7 +70,7 @@
     "eslint-plugin-tailwindcss": "^3.17.5",
     "fast-glob": "^3.3.3",
     "globals": "^15.14.0",
-    "husky": "^9.1.4",
+    "husky": "^9.1.7",
     "lint-staged": "^15.2.7",
     "postcss": "^8.5.2",
     "postcss-load-config": "^6.0.1",
